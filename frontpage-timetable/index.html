@@ -9,7 +9,26 @@
         <link rel="stylesheet" href="styles.css">
     </head>
     <body>
-        <div>
+        <div  id="subcamp">
+            <div class="information-form">
+                <h3 class="form-heading">Valitse alaleiri</h3>
+                <button class="subcamp-button">Valitse alaleiri 1</button>
+                <button class="subcamp-button">Valitse alaleiri 2</button>
+            </div>
+        </div>
+        <div id="agegroup" hidden="hidden">
+            <div class="information-form">
+                <h3 class="form-heading">Valitse ikäkausi</h3>
+                <button class="agegroup-button">Sudenpentu</button>
+                <button class="agegroup-button">Seikkailija</button>
+                <button class="agegroup-button">Tarpoja</button>
+                <button class="agegroup-button">Samoaja</button>
+                <button class="agegroup-button">Vaeltaja</button>
+                <button class="agegroup-button">Aikuinen</button>
+                <button class="back-button">Takaisin</button>
+            </div>
+        </div>
+        <div id="timetable" hidden="hidden">
             <ul>
                 <li>
                     <div class="time-ball">
@@ -33,12 +52,13 @@
                     <div class="time-ball">
                         17.30
                     </div>
-                    <div class="information-box">
+                    <div class="timetable-information-box">
                         <h4>Ruokailu</h4>
                         <p>Sijainti... Kuvaus...</p>
                     </div>
                 </li>
             </ul>
         </div>
+        <script src="index.js"></script>
     </body>
 </html>

@@ -30,37 +30,84 @@ li + li {
     border-top: 1px solid #ccc;
 }
 
-h4 {
+h3, h4 {
     font-family: "Nunito", sans-serif;
     font-optical-sizing: auto;
     font-weight: 900;
     font-style: italic;
-    font-size: 18px;
+    font-size: 22px;
 }
 
 p {
-    font-size: 14px;
+    font-size: 18px;
 }
 
 .time-ball {
     display: flex;
     align-items: center;
     justify-content: center;
-    width: 40px;
-    height: 40px;
+    width: 45px;
+    height: 45px;
     padding: 5px;
     margin: 5px;
     background: #cc5533;
     border-radius: 50%;
     border: 1px solid #ce5738;
     color: white;
-    font-size: 16px;
+    font-size: 18px;
     font-weight: 600;
 }
 
-.information-box {
+.timetable-information-box {
     display: flex;
     flex-direction: column;
     gap: 5px;
     margin: 5px;
+}
+
+.information-form {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    align-items: center;
+}
+
+.form-heading {
+    text-align: center;
+}
+
+.subcamp-button {
+    background-color: #ce5738;
+    border-radius: 30px;
+    border: 1px solid #ce5738;
+    padding: 10px;
+    font-size: 18px;
+    color: white;
+    font-weight: 600;
+    min-width: 170px;
+    max-width: 300px;
+}
+
+.agegroup-button {
+    background-color: #ce5738;
+    border-radius: 30px;
+    border: 1px solid #ce5738;
+    padding: 10px;
+    font-size: 18px;
+    color: white;
+    font-weight: 600;
+    min-width: 170px;
+    max-width: 300px;
+}
+
+.back-button {
+    background-color: grey;
+    border-radius: 30px;
+    border: 1px solid grey;
+    padding: 10px;
+    font-size: 18px;
+    color: white;
+    font-weight: 600;
+    min-width: 170px;
+    max-width: 300px;
 }
