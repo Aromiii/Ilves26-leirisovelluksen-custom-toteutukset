@@ -30,37 +30,12 @@
                 </div>
             </div>
         </div>
-        <div id="timetable" hidden="hidden">
-            <ul>
-                <li>
-                    <div class="time-ball">
-                        17.30
-                    </div>
-                    <div class="information-box">
-                        <h4>Ruokailu</h4>
-                        <p>Sijainti... Kuvaus...</p>
-                    </div>
-                </li>
-                <li>
-                    <div class="time-ball">
-                        17.30
-                    </div>
-                    <div class="information-box">
-                        <h4>Ruokailu</h4>
-                        <p>Sijainti... Kuvaus...</p>
-                    </div>
-                </li>
-                <li>
-                    <div class="time-ball">
-                        17.30
-                    </div>
-                    <div class="timetable-information-box">
-                        <h4>Ruokailu</h4>
-                        <p>Sijainti... Kuvaus...</p>
-                    </div>
-                </li>
-            </ul>
-        </div>
+        <ul id="timetable" hidden="hidden">
+        </ul>
+        <script type="module">
+            import ICAL from 'https://cdn.jsdelivr.net/npm/ical.js@2.0.1/+esm';
+            window.ICAL = ICAL;
+        </script>
         <script src="index.js"></script>
     </body>
 </html>
