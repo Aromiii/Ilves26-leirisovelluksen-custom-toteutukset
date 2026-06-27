@@ -1,0 +1,525 @@
+<!DOCTYPE html>
+<html lang="fi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ilves26 – Aikataulu</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Jost:wght@400;500;600&family=Nunito:ital,wght@0,900;1,900&display=swap" rel="stylesheet">
+    <style>
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+        :root {
+            --brand:   #ce5738;
+            --brandk:  #a8422a;
+            --blight:  #fff0ec;
+            --txt:     #1c1c1e;
+            --muted:   #8a8a8e;
+            --border:  #e5e5ea;
+            --bg:      #ffffff;
+            --surf:    #ffffff;
+        }
+
+        html { scroll-behavior: auto; }
+
+        body {
+            font-family: "Jost", sans-serif;
+            background:#ffffff;
+            color: var(--txt);
+            min-height: 100vh;
+        }
+
+        [hidden] { display: none !important; }
+
+        /* ──────────────────────────────────────────
+           Selection screens
+        ────────────────────────────────────────── */
+        .screen {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 24px;
+        }
+
+        .card {
+            background: var(--surf);
+            border-radius: 20px;
+            border-top: 4px solid var(--brand);
+            padding: 24px 20px 22px;
+            width: 100%;
+            max-width: 340px;
+            box-shadow: 0 4px 28px rgba(0,0,0,0.08);
+        }
+
+        .card-h {
+            font-family: "Nunito", sans-serif;
+            font-weight: 900;
+            font-style: italic;
+            font-size: 24px;
+            color: var(--brand);
+            text-align: center;
+            margin-bottom: 18px;
+        }
+
+        .btn {
+            display: block;
+            width: 100%;
+            border: none;
+            border-radius: 50px;
+            padding: 12px 16px;
+            font-family: "Jost", sans-serif;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: filter .12s, transform .1s;
+            text-align: center;
+        }
+        .btn:active { filter: brightness(.88); transform: scale(.97); }
+
+        .btn-p { background: var(--brand); color: #fff; }
+        .btn-s { background: #d1d1d6; color: #3c3c43; }
+
+        .stack { display: flex; flex-direction: column; gap: 10px; }
+
+        .grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+        .span2 { grid-column: 1 / -1; }
+
+        /* ──────────────────────────────────────────
+           Timetable page
+        ────────────────────────────────────────── */
+        .tt-page { min-height: 100vh; }
+
+        /* Topbar – 56px; also hardcoded as TOPBAR_H = 56 in JS */
+        .topbar {
+            position: sticky;
+            top: 0;
+            z-index: 20;
+            height: 56px;
+            background: var(--brand);
+            color: #fff;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 16px;
+            gap: 12px;
+            box-shadow:0 2px 8px rgba(0,0,0,.08);
+        }
+
+        .tb-info { display: flex; flex-direction: column; gap: 1px; }
+
+        .tb-title {
+            font-family: "Nunito", sans-serif;
+            font-weight: 900;
+            font-style: italic;
+            font-size: 18px;
+            line-height: 1.1;
+        }
+
+        .tb-sub {
+            font-size: 11px;
+            font-weight: 500;
+            opacity: .82;
+            text-transform: capitalize;
+        }
+
+        .tb-btn {
+            background: rgba(255,255,255,.2);
+            border: none;
+            border-radius: 20px;
+            padding: 5px 12px;
+            color: #fff;
+            font-family: "Jost", sans-serif;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            white-space: nowrap;
+            flex-shrink: 0;
+        }
+        .tb-btn:active { background: rgba(255,255,255,.35); }
+
+        /* ──────────────────────────────────────────
+           Event list
+        ────────────────────────────────────────── */
+        #evlist { padding-bottom: 48px; }
+
+        /* Sticky day header sits 56px below the viewport top (= below topbar) */
+        .day-hdr {
+            position: sticky;
+            top: 56px;
+            z-index: 10;
+            background:rgba(255,255,255,.98);
+            padding: 6px 16px 4px;
+            border-bottom: 1px solid var(--border);
+            border-top: 2px solid var(--border);
+        }
+        /* No double border at the very first group */
+        .day-hdr:first-child { border-top: none; }
+
+        .day-lbl {
+            font-family: "Nunito", sans-serif;
+            font-weight: 900;
+            font-style: italic;
+            font-size: 11.5px;
+            letter-spacing: .05em;
+            text-transform: uppercase;
+            color: var(--brandk);
+        }
+
+        /* Event row */
+        .ev-row {
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+            padding: 9px 16px;
+            border-bottom: 1px solid var(--border);
+            background: var(--surf);
+        }
+
+        .ev-row.past { opacity: .34; }
+
+        .ev-row.nxt {
+            background: var(--blight);
+            border-left: 3px solid var(--brand);
+            padding-left: 13px;
+        }
+
+        .ev-t {
+            min-width: 38px;
+            padding-top: 2px;
+            font-size: 12.5px;
+            font-weight: 700;
+            color: var(--brand);
+            letter-spacing: .01em;
+            flex-shrink: 0;
+        }
+        .ev-row.past .ev-t { color: var(--muted); }
+
+        .ev-body { flex: 1; min-width: 0; }
+
+        .ev-hdr {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            flex-wrap: wrap;
+        }
+
+        .ev-name {
+            font-size: 14.5px;
+            font-weight: 600;
+            line-height: 1.3;
+        }
+
+        .ev-badge {
+            font-size: 9.5px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: .06em;
+            background: var(--brand);
+            color: #fff;
+            border-radius: 6px;
+            padding: 2px 5px;
+            flex-shrink: 0;
+        }
+
+        .ev-meta {
+            margin-top: 2px;
+            font-size: 12.5px;
+            color: var(--muted);
+            line-height: 1.3;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        /* ──────────────────────────────────────────
+           Loading / empty / error
+        ────────────────────────────────────────── */
+        .msg {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            padding: 60px 20px;
+            color: var(--muted);
+            font-size: 15px;
+        }
+
+        .spin {
+            width: 18px;
+            height: 18px;
+            border: 2px solid var(--border);
+            border-top-color: var(--brand);
+            border-radius: 50%;
+            animation: rot .65s linear infinite;
+            flex-shrink: 0;
+        }
+        @keyframes rot { to { transform: rotate(360deg); } }
+    </style>
+</head>
+<body>
+
+<!-- ── Screen 0: Checking storage (shown by default) ─── -->
+<div id="s-loading" class="screen">
+    <div class="msg"><div class="spin"></div>Ladataan…</div>
+</div>
+
+<!-- ── Screen 1: Subcamp ───────────────────────────── -->
+<div id="s-camp" class="screen" hidden>
+    <div class="card">
+        <h2 class="card-h">Valitse alaleiri</h2>
+        <div class="stack">
+            <button class="btn btn-p js-camp" value="alaleiri 1">Alaleiri 1</button>
+            <button class="btn btn-p js-camp" value="alaleiri 2">Alaleiri 2</button>
+        </div>
+    </div>
+</div>
+
+<!-- ── Screen 2: Age group ─────────────────────────── -->
+<div id="s-age" class="screen" hidden>
+    <div class="card">
+        <h2 class="card-h">Valitse ikäkausi</h2>
+        <div class="grid2">
+            <button class="btn btn-p js-age" value="sudenpentu">Sudenpentu</button>
+            <button class="btn btn-p js-age" value="seikkailija">Seikkailija</button>
+            <button class="btn btn-p js-age" value="tarpoja">Tarpoja</button>
+            <button class="btn btn-p js-age" value="samoaja">Samoaja</button>
+            <button class="btn btn-p js-age" value="vaeltaja">Vaeltaja</button>
+            <button class="btn btn-p js-age" value="aikuinen">Aikuinen</button>
+            <button class="btn btn-s span2 js-back">← Takaisin</button>
+        </div>
+    </div>
+</div>
+
+<!-- ── Screen 3: Timetable ────────────────────────── -->
+<div id="s-tt" class="tt-page" hidden>
+    <header class="topbar">
+        <div class="tb-info">
+            <span class="tb-sub" id="tb-sub"></span>
+        </div>
+        <button class="tb-btn js-change">Vaihda</button>
+    </header>
+    <div id="evlist">
+        <div class="msg"><div class="spin"></div>Ladataan…</div>
+    </div>
+</div>
+
+<script type="module">
+    import ICAL from 'https://cdn.jsdelivr.net/npm/ical.js@2.0.1/+esm';
+
+    /* ── Config ──────────────────────────────────────────────── */
+    const TOPBAR_H = 56; // keep in sync with CSS .topbar height
+
+    const VALID_CAMPS = ["alaleiri 1", "alaleiri 2"];
+    const VALID_AGES  = ["sudenpentu","seikkailija","tarpoja","samoaja","vaeltaja","aikuinen"];
+
+    const FI_WD = ["su","ma","ti","ke","to","pe","la"];
+    const FI_MO = ["tammikuuta","helmikuuta","maaliskuuta","huhtikuuta","toukokuuta",
+        "kesäkuuta","heinäkuuta","elokuuta","syyskuuta","lokakuuta",
+        "marraskuuta","joulukuuta"];
+
+    /* ── DOM refs ─────────────────────────────────────────────── */
+    const ge = id => document.getElementById(id);
+    const sLoading = ge("s-loading");
+    const sCamp = ge("s-camp"), sAge = ge("s-age"), sTT = ge("s-tt");
+    const evlist = ge("evlist"), tbSub = ge("tb-sub");
+
+    /* ── Helpers ─────────────────────────────────────────────── */
+    const hhmm = d =>
+        d.getHours().toString().padStart(2,'0') + '.' + d.getMinutes().toString().padStart(2,'0');
+
+    const dayLabel = d =>
+        FI_WD[d.getDay()] + ' ' + d.getDate() + '. ' + FI_MO[d.getMonth()];
+
+    const esc = s => s
+        .replace(/&/g,'&amp;')
+        .replace(/</g,'&lt;')
+        .replace(/>/g,'&gt;');
+
+    /* ── State ───────────────────────────────────────────────── */
+    let camp = "";
+    let age  = "";
+
+    /* ── Screen switching ─────────────────────────────────────── */
+    const show = el => {
+        [sLoading, sCamp, sAge, sTT].forEach(s => { s.hidden = true; });
+        el.hidden = false;
+    };
+
+    /* ── Calendar fetch ──────────────────────────────────────── */
+    const fetchCal = async file => {
+        try {
+            const res = await fetch(file);
+
+            if (!res.ok) {
+                console.log(`${file} ei löytynyt`);
+                return [];
+            }
+
+            const comp = new ICAL.Component(
+                ICAL.parse(await res.text())
+            );
+
+            return comp.getAllSubcomponents("vevent")
+                .map(v => new ICAL.Event(v));
+
+        } catch (e) {
+            console.log(`${file} epäonnistui`, e);
+            return [];
+        }
+    };
+
+    /* ── Render timetable ────────────────────────────────────── */
+    const render = async () => {
+        evlist.innerHTML = '<div class="msg"><div class="spin"></div>Ladataan…</div>';
+        tbSub.textContent = `${camp} · ${age}`;
+        window.scrollTo(0, 0);
+
+        try {
+            // Parallel fetch of all relevant calendars
+            const toFetch = [
+                "./yleiset.ics",
+                `./${camp}.ics`,
+                `./${age}.ics`
+            ];
+            const batches = await Promise.all(toFetch.map(fetchCal));
+            let evs = batches.flat();
+
+            if (!evs.length) {
+                evlist.innerHTML = '<div class="msg">Ei tapahtumia</div>';
+                return;
+            }
+
+            // Deduplicate by UID (calendars can overlap)
+            const seen = new Set();
+            evs = evs.filter(ev => {
+                if (!ev.uid) return true;
+                if (seen.has(ev.uid)) return false;
+                seen.add(ev.uid);
+                return true;
+            });
+
+            // Sort chronologically
+            evs.sort((a, b) => a.startDate.toJSDate() - b.startDate.toJSDate());
+
+            // Group by calendar day
+            const groups = new Map();
+            for (const ev of evs) {
+                const d = ev.startDate.toJSDate();
+                const k = d.toDateString();
+                if (!groups.has(k)) groups.set(k, { date: d, evs: [] });
+                groups.get(k).evs.push(ev);
+            }
+
+            // Build DOM
+            const now      = new Date();
+            let   firstNext = null;
+            const frag     = document.createDocumentFragment();
+
+            for (const { date, evs: dEvs } of groups.values()) {
+                // Day header
+                const dh = document.createElement('div');
+                dh.className = 'day-hdr';
+                dh.innerHTML = `<span class="day-lbl">${dayLabel(date)}</span>`;
+                frag.appendChild(dh);
+
+                for (const ev of dEvs) {
+                    const start    = ev.startDate.toJSDate();
+                    const end      = ev.endDate ? ev.endDate.toJSDate() : null;
+                    const isPast   = (end ?? start) < now;
+                    const isAllDay = ev.startDate.isDate;
+                    const isNext   = !isPast && !firstNext;
+
+                    const loc  = (ev.location    || '').trim();
+                    const desc = (ev.description || '').trim();
+                    const meta = [loc, desc].filter(Boolean).join(' · ');
+                    const tStr = isAllDay ? '—' : hhmm(start);
+
+                    const row = document.createElement('div');
+                    row.className = 'ev-row'
+                        + (isPast   ? ' past' : '')
+                        + (isNext   ? ' nxt'  : '');
+
+                    row.innerHTML = `
+                        <span class="ev-t">${esc(tStr)}</span>
+                        <div class="ev-body">
+                            <div class="ev-hdr">
+                                <span class="ev-name">${esc(ev.summary || '—')}</span>
+                                ${isNext ? '<span class="ev-badge">Seuraava</span>' : ''}
+                            </div>
+                            ${meta ? `<div class="ev-meta">${esc(meta)}</div>` : ''}
+                        </div>`;
+
+                    frag.appendChild(row);
+                    if (isNext) firstNext = row;
+                }
+            }
+
+            evlist.innerHTML = '';
+            evlist.appendChild(frag);
+
+            // Scroll so the next event appears just below the sticky topbar + day header
+            if (firstNext) {
+                requestAnimationFrame(() => {
+                    // offsetTop is relative to body since no positioned ancestors intervene
+                    const y = firstNext.offsetTop - TOPBAR_H - 40;
+                    window.scrollTo(0, Math.max(0, y));
+                });
+            }
+
+        } catch (err) {
+            console.error(err);
+            evlist.innerHTML = '<div class="msg">Lataus epäonnistui. Yritä avata sivu uudelleen.</div>';
+        }
+    };
+
+    /* ── Init ────────────────────────────────────────────────── */
+    const init = () => {
+        gb.storage.getItem("subcamp", (campValue) => {
+            if (!VALID_CAMPS.includes(campValue)) { show(sCamp); return; }
+            camp = campValue;
+
+            gb.storage.getItem("ageGroup", (ageValue) => {
+                if (!VALID_AGES.includes(ageValue)) { show(sAge); return; }
+                age = ageValue;
+                show(sTT);
+                render();
+            });
+        });
+    };
+
+    /* ── Listeners ───────────────────────────────────────────── */
+    document.querySelectorAll('.js-camp').forEach(b =>
+        b.addEventListener('click', () => {
+            camp = b.value;
+            gb.storage.setItem("subcamp", camp);
+            show(sAge);
+        })
+    );
+
+    document.querySelectorAll('.js-age').forEach(b =>
+        b.addEventListener('click', async () => {
+            age = b.value;
+            gb.storage.setItem("ageGroup", age);
+            show(sTT);
+            await render();
+        })
+    );
+
+    document.querySelector('.js-back')
+        .addEventListener('click', () => show(sCamp));
+
+    document.querySelector('.js-change')
+        .addEventListener('click', () => {
+            gb.storage.setItem("subcamp", "");
+            gb.storage.setItem("ageGroup", "");
+            camp = age = "";
+            show(sCamp);
+        });
+
+    /* ── Go ──────────────────────────────────────────────────── */
+    gb.onappear = init;
+</script>
+</body>
+</html>

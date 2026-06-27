@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html lang="fi">
+<head>
+    <meta charset="UTF-8">
+    <title>Ilves26 aikataulu</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Jost:wght@400;600&family=Nunito:ital,wght@0,900;1,900&display=swap" rel="stylesheet">
+    <style>
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+        :root {
+            --brand:  #ce5738;
+            --brandk: #a8422a;
+            --txt:    #1c1c1e;
+            --muted:  #8a8a8e;
+            --border: #e5e5ea;
+            --bg:     #f2f2f7;
+            --surf:   #ffffff;
+        }
+
+        body {
+            font-family: "Jost", sans-serif;
+            background: transparent;
+            color: var(--txt);
+            width: 100%;
+            height: 410px;
+            overflow: hidden;
+        }
+
+        [hidden] { display: none !important; }
+
+        /* ── Selection screens ── */
+        #subcamp, #agegroup {
+            height: 410px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 16px;
+        }
+
+        .information-form {
+            background: var(--surf);
+            border-radius: 20px;
+            border-top: 4px solid var(--brand);
+            padding: 20px 18px 16px;
+            width: 100%;
+            max-width: 320px;
+            box-shadow: 0 4px 28px rgba(0,0,0,0.08);
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .form-heading {
+            font-family: "Nunito", sans-serif;
+            font-weight: 900;
+            font-style: italic;
+            font-size: 22px;
+            color: var(--brand);
+            text-align: center;
+            margin-bottom: 2px;
+        }
+
+        /* Agegroup grid overrides */
+        .agegroup-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px;
+            width: 100%;
+        }
+
+        .agegroup-grid .form-heading { grid-column: 1 / -1; }
+        .agegroup-grid .back-button  { grid-column: 1 / -1; }
+
+        /* Buttons */
+        .subcamp-button,
+        .agegroup-button {
+            border: none;
+            border-radius: 50px;
+            padding: 10px 14px;
+            font-family: "Jost", sans-serif;
+            font-size: 15px;
+            font-weight: 600;
+            color: #fff;
+            background: var(--brand);
+            cursor: pointer;
+            transition: filter .12s, transform .1s;
+        }
+        .subcamp-button:active,
+        .agegroup-button:active {
+            filter: brightness(.88);
+            transform: scale(.97);
+        }
+
+        .back-button {
+            border: none;
+            border-radius: 50px;
+            padding: 10px 14px;
+            font-family: "Jost", sans-serif;
+            font-size: 15px;
+            font-weight: 600;
+            color: #3c3c43;
+            background: #d1d1d6;
+            cursor: pointer;
+        }
+
+        /* ── Timetable ── */
+        #timetable {
+            list-style: none;
+            height: 410px;
+            overflow: hidden;
+            background: transparent;
+            padding: 0;
+        }
+
+        #timetable li {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            padding: 13px 16px;
+            border-bottom: 1px solid var(--border);
+            background: transparent;
+        }
+
+        .ev-t {
+            min-width: 52px;
+            font-size: 17px;
+            font-weight: 700;
+            color: var(--brand);
+            letter-spacing: .01em;
+            flex-shrink: 0;
+        }
+
+        .ev-body  { flex: 1; min-width: 0; }
+
+        .ev-name {
+            display: block;
+            font-size: 19px;
+            font-weight: 600;
+            line-height: 1.25;
+        }
+
+        .ev-meta {
+            margin-top: 3px;
+            font-size: 14px;
+            color: var(--muted);
+            line-height: 1.3;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        /* Loading row */
+        li.loading-row {
+            justify-content: center;
+            gap: 8px;
+            color: var(--muted);
+            font-size: 15px;
+            padding: 24px 14px;
+            background: transparent;
+            border-bottom: none;
+        }
+
+        .spin {
+            width: 15px; height: 15px;
+            border: 2px solid var(--border);
+            border-top-color: var(--brand);
+            border-radius: 50%;
+            animation: rot .65s linear infinite;
+            flex-shrink: 0;
+        }
+        @keyframes rot { to { transform: rotate(360deg); } }
+    </style>
+</head>
+<body>
+
+<!-- Subcamp selection -->
+<div id="subcamp" hidden="hidden">
+    <div class="information-form">
+        <h3 class="form-heading">Valitse alaleiri</h3>
+        <button class="subcamp-button" value="alaleiri 1">Alaleiri 1</button>
+        <button class="subcamp-button" value="alaleiri 2">Alaleiri 2</button>
+    </div>
+</div>
+
+<!-- Age group selection -->
+<div id="agegroup" hidden="hidden">
+    <div class="information-form">
+        <div class="agegroup-grid">
+            <h3 class="form-heading">Valitse ikäkausi</h3>
+            <button class="agegroup-button" value="sudenpentu">Sudenpentu</button>
+            <button class="agegroup-button" value="seikkailija">Seikkailija</button>
+            <button class="agegroup-button" value="tarpoja">Tarpoja</button>
+            <button class="agegroup-button" value="samoaja">Samoaja</button>
+            <button class="agegroup-button" value="vaeltaja">Vaeltaja</button>
+            <button class="agegroup-button" value="aikuinen">Aikuinen</button>
+            <button class="back-button">Takaisin</button>
+        </div>
+    </div>
+</div>
+
+<!-- Timetable -->
+<ul id="timetable" hidden="hidden"></ul>
+
+<script type="module">
+    import ICAL from 'https://cdn.jsdelivr.net/npm/ical.js@2.0.1/+esm';
+    window.ICAL = ICAL;
+</script>
+<script>
+    const subcampOptions  = ["alaleiri 1", "alaleiri 2"];
+    const ageGroupOptions = ["sudenpentu","seikkailija","tarpoja","samoaja","vaeltaja","aikuinen"];
+
+    const subcampSection   = document.getElementById("subcamp");
+    const ageSection       = document.getElementById("agegroup");
+    const timetableSection = document.getElementById("timetable");
+
+    const subcampButtons = document.querySelectorAll(".subcamp-button");
+    const ageButtons     = document.querySelectorAll(".agegroup-button");
+    const backButton     = document.querySelector(".back-button");
+
+    const formatTime = (jsDate) => {
+        const h = jsDate.getHours().toString().padStart(2, '0');
+        const m = jsDate.getMinutes().toString().padStart(2, '0');
+        return `${h}.${m}`;
+    };
+
+    const renderEvent = (event) => {
+        const li    = document.createElement('li');
+        const start = event.startDate.toJSDate();
+        const tStr  = event.startDate.isDate ? '—' : formatTime(start);
+        const loc   = (event.location    || '').trim();
+        const desc  = (event.description || '').trim();
+        const meta  = [loc, desc].filter(Boolean).join(' · ');
+
+        li.dataset.start = start.getTime();
+        li.innerHTML = `
+                    <span class="ev-t">${tStr}</span>
+                    <div class="ev-body">
+                        <span class="ev-name">${event.summary || '—'}</span>
+                        ${meta ? `<div class="ev-meta">${meta}</div>` : ''}
+                    </div>`;
+        timetableSection.appendChild(li);
+    };
+
+    const sortEvents = () => {
+        const items = Array.from(timetableSection.querySelectorAll('li[data-start]'));
+        items.sort((a, b) => parseInt(a.dataset.start) - parseInt(b.dataset.start));
+        items.forEach(item => timetableSection.appendChild(item));
+        // Show only the first 4
+        items.slice(4).forEach(item => item.remove());
+    };
+
+    const getCalendar = async (calendarFile) => {
+        const response  = await fetch("./" + calendarFile);
+        const icsString = await response.text();
+        const comp      = new ICAL.Component(ICAL.parse(icsString));
+        comp.getAllSubcomponents('vevent').forEach(vevent => {
+            renderEvent(new ICAL.Event(vevent));
+        });
+    };
+
+    const loadCalendars = async (subcamp, ageGroup) => {
+        timetableSection.innerHTML =
+            '<li class="loading-row"><div class="spin"></div>Ladataan…</li>';
+
+        await Promise.all([
+            getCalendar("yleiset.ics"),
+            getCalendar(`${subcamp}.ics`),
+            getCalendar(`${ageGroup}.ics`)
+        ]);
+
+        sortEvents();
+    };
+
+    const showSection = async (section, subcamp, ageGroup) => {
+        subcampSection.hidden   = true;
+        ageSection.hidden       = true;
+        timetableSection.hidden = true;
+        section.hidden = false;
+        if (section === timetableSection) {
+            await loadCalendars(subcamp, ageGroup);
+        }
+    };
+
+    gb.onappear = async () => {
+        let subcamp  = "";
+        let ageGroup = "";
+
+        gb.storage.getItem("subcamp", (subcampValue) => {
+            if (!subcampOptions.includes(subcampValue)) {
+                showSection(subcampSection);
+                return;
+            }
+            subcamp = subcampValue;
+
+            gb.storage.getItem("ageGroup", (ageGroupValue) => {
+                if (!ageGroupOptions.includes(ageGroupValue)) {
+                    showSection(ageSection);
+                    return;
+                }
+                ageGroup = ageGroupValue;
+                showSection(timetableSection, subcamp, ageGroup);
+            });
+        });
+    };
+
+    subcampButtons.forEach(btn => {
+        btn.addEventListener("click", () => {
+            showSection(ageSection);
+            gb.storage.setItem("subcamp", btn.value);
+        });
+    });
+
+    ageButtons.forEach(btn => {
+        btn.addEventListener("click", () => {
+            showSection(timetableSection);
+            gb.storage.setItem("ageGroup", btn.value);
+        });
+    });
+
+    backButton.addEventListener("click", () => {
+        showSection(subcampSection);
+    });
+</script>
+</body>
+</html>
